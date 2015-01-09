@@ -1,4 +1,4 @@
 {
   "node": true,
-  "predef": ["window", "document", "FileReader", "Worker"]
+  "predef": ["window", "document", "FileReader", "Worker", "JSON"]
 }

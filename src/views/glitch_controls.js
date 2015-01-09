@@ -8,8 +8,18 @@ function renderGlitchControls() {
     h('button', {
       'ev-click': function (ev) { events.shuffleImage$.onNext(ev); },
       'type': 'button',
-      'value': 'shuffle'
-    }, 'Shuffle!')
+      'value': 'spill-red'
+    }, 'Spill red'),
+    h('button', {
+      'ev-click': function (ev) { events.shuffleImage$.onNext(ev); },
+      'type': 'button',
+      'value': 'spill-blue'
+    }, 'Spill blue'),
+    h('button', {
+      'ev-click': function (ev) { events.shuffleImage$.onNext(ev); },
+      'type': 'button',
+      'value': 'spill-green'
+    }, 'Spill green')
   ]);
 }
 

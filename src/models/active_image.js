@@ -11,8 +11,7 @@ replicate(
   ImageModel.imageAdded$.map(function (images) {
     return {
       el: images[0],
-      imageData: getImageData(images[0]),
-      pixOrder: range(images[0].height * images[0].width)
+      imageData: getImageData(images[0])
     };
   }),
   imageActivated$
@@ -22,14 +21,3 @@ replicate(
 module.exports = {
   imageActivated$: imageActivated$,
 };
-
-
-function range(a, z) {
-  if (z === undefined) {
-    z = a;
-    a = 0;
-  }
-  var i, r = new Uint32Array(z - a);
-  for (i = a; i < z; r[i] = i, i++);
-  return r;
-}

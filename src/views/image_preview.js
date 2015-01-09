@@ -3,7 +3,7 @@ var h = require('virtual-hyperscript');
 var GlitchModel = require('glitch_r/models/glitch');
 var ActiveImageModel = require('glitch_r/models/active_image');
 // var GlitchModel = require('glitch_r/models/glitch');
-var getImageData = require('glitch_r/utils/image');
+var ImageData = require('glitch_r/utils/image_data_polyfill');
 
 
 function renderImagePreview(glitchConf) {
@@ -11,11 +11,8 @@ function renderImagePreview(glitchConf) {
   canvas.style['max-width'] = '400px';
   canvas.width = glitchConf.el.width;
   canvas.height = glitchConf.el.height;
-
-  var imageData = getImageData(glitchConf.el);
-  updateImgData(glitchConf.imageData, imageData, glitchConf.pixOrder);
   var ctx = canvas.getContext('2d');
-  ctx.putImageData(imageData, 0, 0);
+  ctx.putImageData(glitchConf.imageData, 0, 0);
   return canvas;
 }
 
@@ -25,14 +22,3 @@ var vtree$ = ActiveImageModel.imageActivated$.merge(GlitchModel.imageGlitched$).
 module.exports = {
   vtree$: vtree$
 };
-
-
-function updateImgData(src, dest, pixorder) {
-  for (var i = pixorder.length - 1; i >= 0; i--) {
-    dest.data[i * 4] = src.data[pixorder[i] * 4];
-    dest.data[i * 4 + 1] = src.data[pixorder[i] * 4 + 1];
-    dest.data[i * 4 + 2] = src.data[pixorder[i] * 4 + 2];
-    dest.data[i * 4 + 3] = src.data[pixorder[i] * 4 + 3];
-  }
-  return dest;
-}
