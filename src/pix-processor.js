@@ -76,7 +76,7 @@ function spillColor(imageData, width, height, params) {
   }
 }
 
-self.onmessage = function (ev) {
+export default function pixProcess(ev) {
   var width = ev.data.width;
   var height = ev.data.height;
   var imageData = new Uint8ClampedArray(ev.data.dataBuffer);
@@ -90,3 +90,5 @@ self.onmessage = function (ev) {
     dataBuffer: imageData.buffer
   }, [imageData.buffer]);
 };
+
+self.onmessage = pixProcess;
