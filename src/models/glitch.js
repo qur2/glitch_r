@@ -1,15 +1,14 @@
 'use strict';
 var Rx = require('rx');
-var GlitchingIntent = require('glitch_r/intents/glitching');
-var ImageActivatedModel = require('glitch_r/models/active_image');
-var replicate = require('glitch_r/utils/replicate');
-var ImageData = require('glitch_r/utils/image_data_polyfill');
 var extend = require('xtend');
+import {glitchImage$} from '../intents/glitching';
+import {imageActivated$} from './active_image';
+import {default as replicate} from '../utils/replicate';
+import {default as ImageData} from '../utils/image_data_polyfill';
 
 
-var seed = Date.now();
-
-var imageGlitched$ = new Rx.Subject();
+export var seed = Date.now();
+export var imageGlitched$ = new Rx.Subject();
 
 /**
  * This is a bit tricky: an observable is replicated in a subject and this subject is used to feed the observable.
@@ -19,8 +18,8 @@ var imageGlitched$ = new Rx.Subject();
  * @return {[type]}                [description]
  */
 replicate(
-  GlitchingIntent.glitchImage$.combineLatest(
-    ImageActivatedModel.imageActivated$.merge(imageGlitched$),
+  glitchImage$.combineLatest(
+    imageActivated$.merge(imageGlitched$),
     function (a, b) {
       return extend(a, b);
     }).distinctUntilChanged(
@@ -30,17 +29,10 @@ replicate(
   imageGlitched$
 );
 
-
-module.exports = {
-  imageGlitched$: imageGlitched$,
-  seed: seed
-};
-
-
 function glitchImagePromise(glitchConf) {
   console.log(glitchConf);
   var p = new Promise(function(resolve, reject) {
-    var worker = new Worker('/dist/js/pixel_compute.js?' + JSON.stringify(glitchConf.extra));
+    var worker = new Worker('/dist/js/pix-processor.js?' + JSON.stringify(glitchConf.extra));
     worker.onmessage = function (ev) {
       resolve({
         el: glitchConf.el,

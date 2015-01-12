@@ -1,25 +1,19 @@
 'use strict';
 var Rx = require('rx');
-var FileLoadingIntent = require('glitch_r/intents/file_loading');
-var replicate = require('glitch_r/utils/replicate');
+import {addDataURL$} from '../intents/file_loading';
+import {default as replicate} from '../utils/replicate';
 
 
-var imageAdded$ = new Rx.Subject();
+export var imageAdded$ = new Rx.Subject();
 
 replicate(
-  FileLoadingIntent.addDataURL$.map(
+  addDataURL$.map(
     loadImagePromise
   ).concatAll().scan([], function (acc, image) {
     return [image].concat(acc);
   }),
   imageAdded$
 );
-
-
-module.exports = {
-  imageAdded$: imageAdded$,
-};
-
 
 /**
  * Using the given `dataURL`, creates a <img> tag.

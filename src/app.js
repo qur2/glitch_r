@@ -1,6 +1,6 @@
-var renderer = require('glitch_r/renderer');
+import {default as renderInit} from './renderer';
 
 
-window.onload = function () {
-  renderer.init();
+window.onload = () => {
+  renderInit();
 };

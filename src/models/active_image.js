@@ -1,14 +1,14 @@
 'use strict';
 var Rx = require('rx');
-var ImageModel = require('glitch_r/models/image');
-var replicate = require('glitch_r/utils/replicate');
-var getImageData = require('glitch_r/utils/image');
+import {imageAdded$} from './image';
+import {default as replicate} from '../utils/replicate';
+import {default as getImageData} from '../utils/image';
 
 
-var imageActivated$ = new Rx.Subject();
+export var imageActivated$ = new Rx.Subject();
 
 replicate(
-  ImageModel.imageAdded$.map(function (images) {
+  imageAdded$.map(function (images) {
     return {
       el: images[0],
       imageData: getImageData(images[0])
@@ -16,8 +16,3 @@ replicate(
   }),
   imageActivated$
 );
-
-
-module.exports = {
-  imageActivated$: imageActivated$,
-};

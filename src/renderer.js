@@ -8,9 +8,9 @@ var h = require('virtual-hyperscript');
 var VDOM = require('virtual-dom');
 var isVirtualNode = require('virtual-dom/vnode/is-vnode');
 var DOMDelegator = require('dom-delegator');
-var FileSelectorView = require('glitch_r/views/file_selector');
-var ImagePreviewView = require('glitch_r/views/image_preview');
-var GlitchControlsView = require('glitch_r/views/glitch_controls');
+import {default as FileSelector} from './views/file_selector';
+import {default as ImagePreview} from './views/image_preview';
+import {default as renderGlitchControls} from './views/glitch_controls';
 
 var delegator;
 
@@ -25,7 +25,7 @@ function renderVTree(vtree, containerSelector) {
   var rootNode;
   if (vtree.subscribe) {
     rootNode = VDOM.create('div');
-    vtree.subscribe(function (vnode) {
+    vtree.subscribe((vnode) => {
       container.innerHTML = '';
       container.appendChild(isVirtualNode(vnode) ? VDOM.create(vnode) : vnode);
     });
@@ -54,20 +54,16 @@ function insertVTree(vtree, containerSelector, prepend) {
   var f = (prepend && true) ? prependTo : appendTo;
   if (vtree.subscribe) {
     rootNode = VDOM.create('div');
-    vtree.subscribe(function (vnode) {
+    vtree.subscribe((vnode) => {
       f(container, isVirtualNode(vnode) ? VDOM.create(vnode) : vnode);
     });
   }
 }
 
 
-function init() {
+export default function init() {
   delegator = new DOMDelegator();
-  renderVTree(FileSelectorView.vtree, '.file-selector');
-  renderVTree(GlitchControlsView.vtree, '.glitch-controls');
-  insertVTree(ImagePreviewView.vtree$, '.image-preview', true);
+  renderVTree(FileSelector, '.file-selector');
+  renderVTree(renderGlitchControls, '.glitch-controls');
+  insertVTree(ImagePreview, '.image-preview', true);
 }
-
-module.exports = {
-  init: init
-};

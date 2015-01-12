@@ -1,9 +1,8 @@
 'use strict';
 var h = require('virtual-hyperscript');
-var GlitchModel = require('glitch_r/models/glitch');
-var ActiveImageModel = require('glitch_r/models/active_image');
-// var GlitchModel = require('glitch_r/models/glitch');
-var ImageData = require('glitch_r/utils/image_data_polyfill');
+import {imageGlitched$} from '../models/glitch';
+import {imageActivated$} from '../models/active_image';
+import {default as ImageData} from '../utils/image_data_polyfill';
 
 
 function renderImagePreview(glitchConf) {
@@ -16,9 +15,4 @@ function renderImagePreview(glitchConf) {
   return canvas;
 }
 
-var vtree$ = ActiveImageModel.imageActivated$.merge(GlitchModel.imageGlitched$).map(renderImagePreview);
-
-
-module.exports = {
-  vtree$: vtree$
-};
+export default imageActivated$.merge(imageGlitched$).map(renderImagePreview);

@@ -1,10 +1,7 @@
 'use strict';
 
 
-module.exports = getImageData;
-
-
-function getImageData(image) {
+export default function getImageData(image) {
   var canvas = document.createElement('canvas');
   canvas.width = image.width;
   canvas.height = image.height;

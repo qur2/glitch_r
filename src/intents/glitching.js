@@ -1,11 +1,11 @@
 'use strict';
 var Rx = require('rx');
-var events = require('glitch_r/views/events');
+import {shuffleImage$} from '../views/events';
 
 
-var glitchImage$ = new Rx.Subject();
+export var glitchImage$ = new Rx.Subject();
 
-events.shuffleImage$.subscribe(
+shuffleImage$.subscribe(
   function (ev) {
     var v = ev.currentTarget.value.split('-');
     glitchImage$.onNext({
@@ -20,8 +20,3 @@ events.shuffleImage$.subscribe(
   function (err) {
     glitchImage$.onError(err);
   });
-
-
-module.exports = {
-    glitchImage$: glitchImage$,
-};

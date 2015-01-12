@@ -1,6 +1,6 @@
 'use strict';
 var Rx = require('rx');
-var events = require('glitch_r/views/events');
+import {selectFile$} from '../views/events';
 
 
 // Internals for file reading mechanics:
@@ -18,17 +18,12 @@ var fileObservable = Rx.Observable.create(function (obs) {
   };
 });
 
-var addDataURL$ = Rx.Subject.create(fileObserver, fileObservable);
+export var addDataURL$ = Rx.Subject.create(fileObserver, fileObservable);
 
-events.selectFile$.subscribe(
+selectFile$.subscribe(
   function (ev) {
     addDataURL$.onNext(ev.currentTarget.files[0]);
   },
   function (err) {
     addDataURL$.onError(err);
   });
-
-
-module.exports = {
-    addDataURL$: addDataURL$
-};

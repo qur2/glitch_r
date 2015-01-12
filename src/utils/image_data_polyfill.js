@@ -1,7 +1,7 @@
 'use strict';
 
 
-function ImageData() {
+export default function ImageData() {
     var i = 0;
     if(arguments[0] instanceof Uint8ClampedArray) {
         var data = arguments[i++];
@@ -17,6 +17,3 @@ function ImageData() {
     if (data) imageData.data.set(data);
     return imageData;
 }
-
-
-module.exports = ImageData;
