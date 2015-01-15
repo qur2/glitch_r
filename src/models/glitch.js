@@ -9,19 +9,25 @@ import {default as ImageData} from '../utils/image_data_polyfill';
 
 export var seed = Date.now();
 export var imageGlitched$ = new Rx.Subject();
+var imageAddedOrGlitched$ = imageActivated$.merge(imageGlitched$);
 
 /**
  * This is a bit tricky: an observable is replicated in a subject and this subject is used to feed the observable.
+ * TODO Simplify using withLatestFrom when available.
  * @param  {[type]} a              [description]
  * @param  {[type]} b)             [description]
  * @param  {[type]} imageGlitched$ [description]
  * @return {[type]}                [description]
  */
 replicate(
-  glitchImage$.combineLatest(
-    imageActivated$.merge(imageGlitched$),
+  imageAddedOrGlitched$.combineLatest(
+    glitchImage$,
     function (a, b) {
       return extend(a, b);
+    }).filter(
+    function (glitchConf) {
+      // discard object referencing a neutered array
+      return glitchConf.imageData.data.length > 0;
     }).distinctUntilChanged(
     function (glitchConf) {
       return glitchConf.t;
@@ -30,7 +36,6 @@ replicate(
 );
 
 function glitchImagePromise(glitchConf) {
-  console.log(glitchConf);
   var p = new Promise(function(resolve, reject) {
     var worker = new Worker('/dist/js/pix-processor.js?' + JSON.stringify(glitchConf.extra));
     worker.onmessage = function (ev) {
