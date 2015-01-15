@@ -1,0 +1,13 @@
+@import "bootstrap.less";
+
+.glitch-control {
+  .btn-toolbar;
+}
+
+button {
+    .btn-default();
+    &:extend(.btn, .btn.btn-default all);
+}
+.glitch-param:extend(.btn-group all) {}
+.glitch-param > button:extend(.btn-group > .btn all) {}
+.glitch-param button + button:extend(.btn-group .btn + .btn all) {}

@@ -23,6 +23,7 @@
   "author": "Aurélien Scoubeau",
   "license": "ISC",
   "dependencies": {
+    "bootstrap": "http://github.com/twbs/bootstrap/tarball/v3.3.1",
     "dom-delegator": "^12.0.0",
     "lcg-random": "^1.0.2",
     "rx": "^2.3.22",
