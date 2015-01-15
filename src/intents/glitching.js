@@ -1,18 +1,21 @@
 'use strict';
 var Rx = require('rx');
-import {shuffleImage$} from '../views/events';
+import {spill$} from '../views/events';
 
 
 export var glitchImage$ = new Rx.Subject();
 
-shuffleImage$.subscribe(
-  function (ev) {
-    var v = ev.currentTarget.value.split('-');
+spill$.subscribe(
+  function (evs) {
+    var o = evs[0].currentTarget.value;
+    var color = evs[1].currentTarget.value;
+    var direction = evs[2].currentTarget.value;
     glitchImage$.onNext({
-      o: v[0],
-      t: ev.timeStamp,
+      o: o,
+      t: evs[0].timeStamp,
       extra: {
-        channel: v[1] == 'red' ? 0 : (v[1] == 'green' ? 1 : 2),
+        channel: color == 'red' ? 0 : (color == 'green' ? 1 : 2),
+        direction: direction,
         amount: 2
       }
     });
