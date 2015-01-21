@@ -20,18 +20,15 @@ var imageAddedOrGlitched$ = imageActivated$.merge(imageGlitched$);
  * @return {[type]}                [description]
  */
 replicate(
-  imageAddedOrGlitched$.combineLatest(
-    glitchImage$,
-    function (a, b) {
-      return extend(a, b);
+  glitchImage$.withLatestFrom(
+    imageAddedOrGlitched$,
+    function (g, i) {
+      return extend(g, i);
     }).filter(
-    function (glitchConf) {
-      // discard object referencing a neutered array
-      return glitchConf.imageData.data.length > 0;
-    }).distinctUntilChanged(
-    function (glitchConf) {
-      return glitchConf.t;
-    }).map(glitchImagePromise).concatAll(),
+      function (g) {
+        // discard object referencing a neutered array
+        return g.imageData.data.length > 0;
+      }).map(glitchImagePromise).concatAll(),
   imageGlitched$
 );
 
