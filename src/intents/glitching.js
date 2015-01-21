@@ -1,25 +1,13 @@
 'use strict';
+import {default as replicate} from '../utils/replicate';
+import {glitchingSpill$} from './glitching_spill';
 var Rx = require('rx');
-import {spill$} from '../views/events';
 
 
+/**
+ * Big merge of intents for all glitching effects.
+ * Enables models to listen to all glitching intents through this subject.
+ */
 export var glitchImage$ = new Rx.Subject();
 
-spill$.subscribe(
-  function (evs) {
-    var o = evs[0].currentTarget.value;
-    var color = evs[1].currentTarget.value;
-    var direction = evs[2].currentTarget.value;
-    glitchImage$.onNext({
-      o: o,
-      t: evs[0].timeStamp,
-      extra: {
-        channel: color == 'red' ? 0 : (color == 'green' ? 1 : 2),
-        direction: direction,
-        amount: 2
-      }
-    });
-  },
-  function (err) {
-    glitchImage$.onError(err);
-  });
+replicate(glitchingSpill$, glitchImage$);
