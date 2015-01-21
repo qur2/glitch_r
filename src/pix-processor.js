@@ -63,16 +63,16 @@ function spillColor(imageData, width, height, params) {
   var i, j, v, vv, c = params.channel || 0;
   for (i = imageData.length-4; i >= 0; i-=4) {
     v = imageData[i+c];
-      for (j = params.amount+1; j > 0; j--) {
-        vv = imageData[i+c+j*4];
-        if (v > vv) {
-          imageData[i+c+j*4] = (v + vv) / 2
-        }
-        vv = imageData[i+c-j*4];
-        if (v > vv) {
-          imageData[i+c-j*4] = (v + vv) / 2
-        }
+    for (j = params.amount+1; j > 0; j--) {
+      vv = imageData[i+c+j*4];
+      if (v > vv) {
+        imageData[i+c+j*4] = (v + vv) / 2
       }
+      vv = imageData[i+c-j*4];
+      if (v > vv) {
+        imageData[i+c-j*4] = (v + vv) / 2
+      }
+    }
   }
 }
 
@@ -89,6 +89,7 @@ export default function pixProcess(ev) {
   self.postMessage({
     dataBuffer: imageData.buffer
   }, [imageData.buffer]);
+  self.close();
 };
 
 self.onmessage = pixProcess;
