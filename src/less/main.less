@@ -1,13 +1,28 @@
-@import "bootstrap.less";
+@libpath: "vendors/uikit/src/less";
+@themepath: "vendors/uikit/themes";
 
-.glitch-control {
-  .btn-toolbar;
-}
+@import "@{libpath}/components/form-file.less";
+@import "@{themepath}/gradient/uikit.less";
 
-button {
-    .btn-default();
-    &:extend(.btn, .btn.btn-default all);
+.has-file {
+	.is-file {
+	    position: relative;
+	    overflow: hidden;
+	}
+
+	input[type=file] {
+	    position: absolute;
+	    top: 0;
+	    right: 0;
+	    min-width: 100%;
+	    min-height: 100%;
+	    font-size: 100px;
+	    text-align: right;
+	    filter: alpha(opacity=0);
+	    opacity: 0;
+	    outline: none;
+	    background: white;
+	    cursor: inherit;
+	    display: block;
+	}
 }
-.glitch-param:extend(.btn-group all) {}
-.glitch-param > button:extend(.btn-group > .btn all) {}
-.glitch-param button + button:extend(.btn-group .btn + .btn all) {}

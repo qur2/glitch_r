@@ -6,16 +6,18 @@ var h = require('virtual-hyperscript');
 var Rx = require('rx');
 
 
-function renderOptions(config, channel) {
-  return h('div.glitch-param', {}, config.values.map((v, i) => {
-    return h('button',
+function renderOptions(title, config, subject$) {
+  return h('div.uk-button-group', {}, [
+      h('button.uk-button.uk-button-small', {disabled: true}, title)
+    ].concat(config.values.map((v, i) => {
+    return h('button.uk-button.uk-button-small',
       {
-        'ev-click': function (ev) { channel.onNext(ev); },
+        'ev-click': function (ev) { subject$.onNext(ev); },
         'type': 'button',
         'value': v,
-        'className': i == config.active ? 'active' : ''
+        'className': i == config.active ? 'uk-button-primary' : ''
       }, buttonSymbols[v])
-  }));
+  })));
 }
 
 export default channelConfig$.combineLatest(
@@ -23,17 +25,15 @@ export default channelConfig$.combineLatest(
   (channel, direction) => {
     return {'channel': channel, 'direction': direction};
   }).map((configs) => {
-    return h('div.glitch-control', {}, [
-      renderOptions(configs.channel, colorChange$),
-      renderOptions(configs.direction, directionChange$),
-      h('div.glitch-param', {}, [
-        h('button',
-          {
-            'ev-click': function (ev) { spillClick$.onNext(ev); },
-            'type': 'button',
-            'value': 'spill'
-          }, 'GO!'),
-      ])
+    return h('fieldset', {}, [
+      renderOptions('color', configs.channel, colorChange$),
+      renderOptions('direction', configs.direction, directionChange$),
+      h('button.uk-button.uk-button-small',
+        {
+          'ev-click': function (ev) { spillClick$.onNext(ev); },
+          'type': 'button',
+          'value': 'spill'
+        }, 'Spill!'),
     ]);
   });
 
@@ -46,56 +46,3 @@ var buttonSymbols = {
   'green': '𝖦',
   'blue': '𝖡',
 };
-
-function renderGlitchControls() {
-  return h('div.glitch-control', {}, [
-    h('div.glitch-param', {}, [
-      h('button',
-        {
-          'ev-click': function (ev) { direction$.onNext(ev); },
-          'type': 'button',
-          'value': 'horizontal'
-        }, '↔'),
-      h('button',
-        {
-          'ev-click': function (ev) { direction$.onNext(ev); },
-          'type': 'button',
-          'value': 'vertical'
-        }, '↕'),
-      h('button',
-        {
-          'ev-click': function (ev) { direction$.onNext(ev); },
-          'type': 'button',
-          'value': 'cross'
-        }, '✛'),
-    ]),
-    h('div.glitch-param', {}, [
-      h('button',
-        {
-          'ev-click': function (ev) { color$.onNext(ev); },
-          'type': 'button',
-          'value': 'red'
-        }, 'R'),
-      h('button',
-        {
-          'ev-click': function (ev) { color$.onNext(ev); },
-          'type': 'button',
-          'value': 'green'
-        }, 'G'),
-      h('button',
-        {
-          'ev-click': function (ev) { color$.onNext(ev); },
-          'type': 'button',
-          'value': 'blue'
-        }, 'B'),
-    ]),
-    h('div.glitch-param', {}, [
-      h('button',
-        {
-          'ev-click': function (ev) { spillClick$.onNext(ev); },
-          'type': 'button',
-          'value': 'spill'
-        }, 'GO!'),
-    ]),
-  ]);
-}
