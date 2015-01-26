@@ -54,24 +54,53 @@ function range(a, z) {
     z = a;
     a = 0;
   }
-  var i, r = new Uint32Array(z - a);
-  for (i = a; i < z; r[i] = i, i++);
+  var i, r = new Int32Array(z - a + 1);
+  for (i = 0; i <= z - a; i++) r[i] = z - i;
   return r;
+}
+function range(a, z, step) {
+  if (arguments.length == 1) {
+    z = a; a = 0; step = 1;
+  }
+  else if (arguments.length == 2) {
+    step = 1;
+  }
+  var i, r = [];
+  for (i = a; i < z; i += step) r.push(i);
+  return r;
+};
+
+function getHorizontalNeighbors(i, n, width, height) {
+  return range(-n+i, n+i+1);
+}
+function getVerticalNeighbors(i, n, width, height) {
+  return range(-n*width+i, (n+1)*width+i, width);
 }
 
 function spillColor(imageData, width, height, params) {
-  var i, j, v, vv, c = params.channel || 0;
-  for (i = imageData.length-4; i >= 0; i-=4) {
-    v = imageData[i+c];
-    for (j = params.amount+1; j > 0; j--) {
-      vv = imageData[i+c+j*4];
+  var i, j, v, vv, c = params.channel || 0, pixels, area;
+  if (params.direction == 0) {
+    area = getHorizontalNeighbors;
+  } else if (params.direction == 1) {
+    area = getVerticalNeighbors;
+  } else {
+    area = function (i, n, w, h) {
+      return getHorizontalNeighbors(i, n, w, h).concat(
+        getVerticalNeighbors(i, n, w, h)
+      );
+    }
+  }
+  pixels = area(width * height - 1, params.amount, width, height);
+  for (i = width * height - 1; i >= 0; i--) {
+    v = imageData[i*4+c];
+    for (j = pixels.length-1; j >= 0; j--) {
+      vv = imageData[pixels[j]*4+c];
       if (v > vv) {
-        imageData[i+c+j*4] = (v + vv) / 2
+        imageData[pixels[j]*4+c] = (v + vv) / 2
       }
-      vv = imageData[i+c-j*4];
-      if (v > vv) {
-        imageData[i+c-j*4] = (v + vv) / 2
-      }
+      // decrement neighbor for next iteration instead of recomputing
+      // the array
+      pixels[j]--;
     }
   }
 }
