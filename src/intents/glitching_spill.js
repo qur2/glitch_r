@@ -32,7 +32,7 @@ replicate(
 
 replicate(
   spillClick$.withLatestFrom(
-    settingColor$, settingDirection$,
+    settingColor$.startWith(0), settingDirection$.startWith(0),
     (clickEv, color, direction) => {
       return {
         o: 'spill',
