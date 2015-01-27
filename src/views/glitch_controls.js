@@ -8,9 +8,9 @@ var Rx = require('rx');
 
 function renderOptions(title, config, subject$) {
   return h('div.uk-button-group', {}, [
-      h('button.uk-button.uk-button-small', {disabled: true}, title)
+      h('button.uk-button.q-button-label', {disabled: true}, title)
     ].concat(config.values.map((v, i) => {
-    return h('button.uk-button.uk-button-small',
+    return h('button.uk-button',
       {
         'ev-click': function (ev) { subject$.onNext(ev); },
         'type': 'button',
