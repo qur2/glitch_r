@@ -1,40 +1,41 @@
+/** @jsx h */
 'use strict';
-import {channelConfig$, directionConfig$} from '../models/spill';
+import {default as spillConfig$} from '../models/spill';
 import {default as replicate} from '../utils/replicate';
-import {spillClick$, colorChange$, directionChange$} from './events';
+import {spillClick$, colorChange$, directionChange$, amountChange$} from './events';
 var h = require('virtual-hyperscript');
 var Rx = require('rx');
 
 
-function renderOptions(title, config, subject$) {
+var paramSubjects = {
+  channel: colorChange$,
+  direction: directionChange$,
+  amount: amountChange$
+};
+
+function renderEnum(config) {
   return h('div.uk-button-group', {}, [
-      h('button.uk-button.q-button-label', {disabled: true}, title)
+      h('button.uk-button.q-button-label', {disabled: true}, config.name)
     ].concat(config.values.map((v, i) => {
     return h('button.uk-button',
       {
-        'ev-click': function (ev) { subject$.onNext(ev); },
+        'ev-click': function (ev) { paramSubjects[config.name].onNext(ev); },
         'type': 'button',
         'value': v,
         'className': i == config.active ? 'uk-button-primary' : ''
-      }, buttonSymbols[v])
+      }, buttonSymbols[v] || v)
   })));
 }
 
-export default channelConfig$.combineLatest(
-  directionConfig$,
-  (channel, direction) => {
-    return {'channel': channel, 'direction': direction};
-  }).map((configs) => {
-    return h('fieldset', {}, [
-      renderOptions('color', configs.channel, colorChange$),
-      renderOptions('direction', configs.direction, directionChange$),
+export default spillConfig$.map((config) => {
+    return h('fieldset', {}, config.params.map(renderEnum).concat([
       h('button.uk-button.uk-button-small',
         {
           'ev-click': function (ev) { spillClick$.onNext(ev); },
           'type': 'button',
           'value': 'spill'
-        }, 'Spill!'),
-    ]);
+        }, 'Spill!')
+    ]));
   });
 
 var buttonSymbols = {
