@@ -2,21 +2,22 @@ import {default as replicate} from '../utils/replicate';
 import {settingColor$, settingDirection$, settingAmount$} from '../intents/glitching_spill';
 var Rx = require('rx');
 var xtend = require('xtend');
+import {default as fxConf} from '../fx-config.js';
 
 
 var _channelConfig$ = new Rx.BehaviorSubject({
   'name': 'channel',
-  'values': ['red', 'green', 'blue']
+  'values': fxConf[0].params[0].values
 });
 
 var _directionConfig$ = new Rx.BehaviorSubject({
   'name': 'direction',
-  'values': ['horizontal', 'vertical', 'bidirectional']
+  'values': fxConf[0].params[1].values
 });
 
 var _amountConfig$ = new Rx.BehaviorSubject({
   'name': 'amount',
-  'values': ['1', '2', '5']
+  'values': fxConf[0].params[2].values
 });
 
 

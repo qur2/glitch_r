@@ -1,22 +1,18 @@
 'use strict';
+import {default as fxConf} from '../fx-config.js';
 import {default as replicate} from '../utils/replicate';
 import {spillClick$, colorChange$, directionChange$, amountChange$} from '../views/events';
 var Rx = require('rx');
+var xtend = require('xtend');
 
 
-var channelMap = {
-  red: 0, green: 1, blue: 2
-};
-var directionMap = {
-  horizontal: 0,
-  vertical: 1,
-  bidirectional: 2
-};
-var amountMap = {
-  1: 0,
-  2: 1,
-  5: 2
-};
+var paramMap = fxConf.reduce((acc, fx) => {
+  var o = {};
+  fx.params.map((param) => {
+    o[param.name] = param.values;
+  });
+  return xtend(acc, o);
+}, {});
 
 export var glitchingSpill$ = new Rx.Subject();
 export var settingColor$ = new Rx.Subject();
@@ -25,19 +21,19 @@ export var settingAmount$ = new Rx.Subject();
 
 replicate(
   colorChange$.map(function (ev) {
-    return channelMap[ev.currentTarget.value] || 0;
+    return paramMap['channel'].indexOf(ev.currentTarget.value);
   }),
   settingColor$
 );
 replicate(
   directionChange$.map(function (ev) {
-    return directionMap[ev.currentTarget.value] || 0;
+    return paramMap['direction'].indexOf(ev.currentTarget.value);
   }),
   settingDirection$
 );
 replicate(
   amountChange$.map(function (ev) {
-    return amountMap[ev.currentTarget.value] || 0;
+    return parseInt(ev.currentTarget.value) || 1;
   }),
   settingAmount$
 );
