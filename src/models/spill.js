@@ -5,6 +5,8 @@ var xtend = require('xtend');
 import {default as fxConf} from '../fx-config.js';
 
 
+// those subjects are ugly with their conf values hardcoded.
+// there obviously is a way to refactor that, but let's not rush it.
 var _channelConfig$ = new Rx.BehaviorSubject({
   'name': 'channel',
   'values': fxConf[0].params[0].values
