@@ -105,6 +105,35 @@ function spillColor(imageData, draft, width, height, params) {
   }
   return draft;
 }
+
+function whiteUpDarkDown(imageData, draft, width, height, params) {
+  var i, j, v, pixels, treshold = 190;
+  pixels = getVerticalNeighbors(width * height - 1, params.amount, width, height);
+  for (i = width * height - 1; i >= 0; i--) {
+    v = imageData[i*4] + imageData[i*4+1] + imageData[i*4+2];
+    if (v < treshold) {
+      // darken lower pixels
+      for (j = pixels.length-1; j >= params.amount; j--) {
+        draft[pixels[j]*4] /= 2;
+        draft[pixels[j]*4+1] /= 2;
+        draft[pixels[j]*4+2] /= 2;
+      }
+    }
+    if (v > 255 * 3 - treshold) {
+      // lighten upper pixels
+      for (j = pixels.length/2; j >= 0; j--) {
+        draft[pixels[j]*4] *= 1.5;
+        draft[pixels[j]*4+1] *= 1.5;
+        draft[pixels[j]*4+2] *= 1.5;
+      }
+    }
+    for (j = pixels.length-1; j >= 0; j--) {
+      // decrement neighbor for next iteration instead of recomputing
+      // the array
+      pixels[j]--;
+    }
+  }
+  return draft;
 }
 
 export default function pixProcess(ev) {
@@ -117,7 +146,7 @@ export default function pixProcess(ev) {
   var glitch;
   switch (ev.data.o) {
     case 'spill': glitch = spillColor; break;
-    default: glitch = spillColor;
+    case 'bwsplit': glitch = whiteUpDarkDown; break;
   }
   glitch(imageData, draft, width, height, params);
   self.postMessage({
