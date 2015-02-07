@@ -77,7 +77,7 @@ function getVerticalNeighbors(i, n, width, height) {
   return range(-n*width+i, i, width).concat(range(i, (n+1)*width+i, width).slice(1));
 }
 
-function spillColor(imageData, width, height, params) {
+function spillColor(imageData, draft, width, height, params) {
   var i, j, v, vv, c = params.channel || 0, pixels, area;
   if (params.direction == 0) {
     area = getHorizontalNeighbors;
@@ -96,28 +96,33 @@ function spillColor(imageData, width, height, params) {
     for (j = pixels.length-1; j >= 0; j--) {
       vv = imageData[pixels[j]*4+c];
       if (v > vv) {
-        imageData[pixels[j]*4+c] = (v + vv) / 2
+        draft[pixels[j]*4+c] = (v + vv) / 2;
       }
       // decrement neighbor for next iteration instead of recomputing
       // the array
       pixels[j]--;
     }
   }
+  return draft;
+}
 }
 
 export default function pixProcess(ev) {
   var width = ev.data.width;
   var height = ev.data.height;
   var imageData = new Uint8ClampedArray(ev.data.dataBuffer);
+  // TODO Would be faster with an empty array rather than a copy?
+  // var draft = new Uint8ClampedArray(new ArrayBuffer(ev.data.dataBuffer.byteLength));
+  var draft = new Uint8ClampedArray(ev.data.dataBuffer.slice(0));
   var glitch;
   switch (ev.data.o) {
     case 'spill': glitch = spillColor; break;
     default: glitch = spillColor;
   }
-  glitch(imageData, width, height, params);
+  glitch(imageData, draft, width, height, params);
   self.postMessage({
-    dataBuffer: imageData.buffer
-  }, [imageData.buffer]);
+    dataBuffer: draft.buffer
+  }, [draft.buffer]);
   self.close();
 };
 
