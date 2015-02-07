@@ -71,10 +71,10 @@ function range(a, z, step) {
 };
 
 function getHorizontalNeighbors(i, n, width, height) {
-  return range(-n+i, n+i+1);
+  return range(-n+i, i).concat(i+1, n+i+1);
 }
 function getVerticalNeighbors(i, n, width, height) {
-  return range(-n*width+i, (n+1)*width+i, width);
+  return range(-n*width+i, i, width).concat(range(i, (n+1)*width+i, width).slice(1));
 }
 
 function spillColor(imageData, width, height, params) {
