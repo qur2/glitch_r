@@ -1,6 +1,6 @@
 'use strict';
 var Rx = require('rx');
-var FileLoadingIntent = require('glitch_r/intents/file_loading');
+var FileLoadingIntent = require('../intents/file_loading');
 
 // TODO switch to <img> element to avoid src async setting and easy access to width and height attrs
 
